@@ -6,7 +6,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const IpldBitcoin = require('../src/index')
+const IpldLeofcoin = require('../src/index')
 
 const fixtureBlockHex = loadFixture('test/fixtures/block.hex')
 const fixtureBlock = Buffer.from(fixtureBlockHex.toString(), 'hex')
@@ -14,7 +14,7 @@ const invalidDagNode = {invalid: 'dagNode'}
 
 describe('IPLD format util API deserialize()', () => {
   it('should work correctly', (done) => {
-    IpldBitcoin.util.deserialize(fixtureBlock, (err, dagNode) => {
+    IpldLeofcoin.util.deserialize(fixtureBlock, (err, dagNode) => {
       expect(err).to.not.exist()
       verifyBlock(dagNode, {
         version: 2,
@@ -31,7 +31,7 @@ describe('IPLD format util API deserialize()', () => {
   it('should deserialize Segwit correctly (a)', (done) => {
     const segwitBlockHex = loadFixture('test/fixtures/segwit.hex')
     const segwitBlock = Buffer.from(segwitBlockHex.toString(), 'hex')
-    IpldBitcoin.util.deserialize(segwitBlock, (err, dagNode) => {
+    IpldLeofcoin.util.deserialize(segwitBlock, (err, dagNode) => {
       expect(err).to.not.exist()
       verifyBlock(dagNode, {
         version: 536870914,
@@ -51,7 +51,7 @@ describe('IPLD format util API deserialize()', () => {
   it('should deserialize Segwit correctly (b)', (done) => {
     const segwitBlockHex = loadFixture('test/fixtures/segwit2.hex')
     const segwitBlock = Buffer.from(segwitBlockHex.toString(), 'hex')
-    IpldBitcoin.util.deserialize(segwitBlock, (err, dagNode) => {
+    IpldLeofcoin.util.deserialize(segwitBlock, (err, dagNode) => {
       expect(err).to.not.exist()
       verifyBlock(dagNode, {
         version: 536870914,
@@ -71,7 +71,7 @@ describe('IPLD format util API deserialize()', () => {
   it('should deserialize Segwit correctly (c)', (done) => {
     const segwitBlockHex = loadFixture('test/fixtures/segwit3.hex')
     const segwitBlock = Buffer.from(segwitBlockHex.toString(), 'hex')
-    IpldBitcoin.util.deserialize(segwitBlock, (err, dagNode) => {
+    IpldLeofcoin.util.deserialize(segwitBlock, (err, dagNode) => {
       expect(err).to.not.exist()
       verifyBlock(dagNode, {
         version: 536870912,
@@ -91,7 +91,7 @@ describe('IPLD format util API deserialize()', () => {
   it('should deserialize a block without transactions', (done) => {
     const hexData = '01000000000102e9b542c5176808107ff1df906f46bb1f2583b16112b95ee5380665ba7fcfc0010000000000ffffffff80e68831516392fcd100d186b3c2c7b95c80b53c77e77c35ba03a66b429a2a1b0000000000ffffffff0280969800000000001976a914de4b231626ef508c9a74a8517e6783c0546d6b2888ac80969800000000001976a9146648a8cd4531e1ec47f35916de8e259237294d1e88ac02483045022100f6a10b8604e6dc910194b79ccfc93e1bc0ec7c03453caaa8987f7d6c3413566002206216229ede9b4d6ec2d325be245c5b508ff0339bf1794078e20bfe0babc7ffe683270063ab68210392972e2eb617b2388771abe27235fd5ac44af8e61693261550447a4c3e39da98ac024730440220032521802a76ad7bf74d0e2c218b72cf0cbc867066e2e53db905ba37f130397e02207709e2188ed7f08f4c952d9d1398'
     const block = Buffer.from(hexData.toString(), 'hex')
-    IpldBitcoin.util.deserialize(block, (err, dagNode) => {
+    IpldLeofcoin.util.deserialize(block, (err, dagNode) => {
       expect(err).to.not.exist()
       expect(dagNode.transactions).to.be.empty()
       verifyCid(
@@ -103,7 +103,7 @@ describe('IPLD format util API deserialize()', () => {
 
   it('should error on an invalid block', (done) => {
     const invalidBlock = Buffer.from('abcdef', 'hex')
-    IpldBitcoin.util.deserialize(invalidBlock, (err, dagNode) => {
+    IpldLeofcoin.util.deserialize(invalidBlock, (err, dagNode) => {
       expect(dagNode).to.not.exist()
       expect(err).to.be.an('error')
       done()
@@ -113,9 +113,9 @@ describe('IPLD format util API deserialize()', () => {
 
 describe('IPLD format util API serialize()', () => {
   it('should round-trip (de)serialization correctly', (done) => {
-    IpldBitcoin.util.deserialize(fixtureBlock, (err, dagNode) => {
+    IpldLeofcoin.util.deserialize(fixtureBlock, (err, dagNode) => {
       expect(err).to.not.exist()
-      IpldBitcoin.util.serialize(dagNode, (err, binaryBlob) => {
+      IpldLeofcoin.util.serialize(dagNode, (err, binaryBlob) => {
         expect(err).to.not.exist()
         expect(binaryBlob).to.deep.equal(fixtureBlock)
         done()
@@ -124,7 +124,7 @@ describe('IPLD format util API serialize()', () => {
   })
 
   it('should error on an invalid internal representation', (done) => {
-    IpldBitcoin.util.serialize(invalidDagNode, (err, binaryBlob) => {
+    IpldLeofcoin.util.serialize(invalidDagNode, (err, binaryBlob) => {
       expect(binaryBlob).to.not.exist()
       expect(err).to.be.an('error')
       done()
@@ -134,7 +134,7 @@ describe('IPLD format util API serialize()', () => {
 
 describe('IPLD format util API cid()', () => {
   it('should encode the CID correctly', (done) => {
-    IpldBitcoin.util.deserialize(fixtureBlock, (err, dagNode) => {
+    IpldLeofcoin.util.deserialize(fixtureBlock, (err, dagNode) => {
       expect(err).to.not.exist()
       verifyCid(
         dagNode,
@@ -144,7 +144,7 @@ describe('IPLD format util API cid()', () => {
   })
 
   it('should error on an invalid internal representation', (done) => {
-    IpldBitcoin.util.cid(invalidDagNode, (err, cid) => {
+    IpldLeofcoin.util.cid(invalidDagNode, (err, cid) => {
       expect(cid).to.not.exist()
       expect(err).to.be.an('error')
       done()
@@ -162,7 +162,7 @@ const verifyBlock = (dagNode, expected) => {
 }
 
 const verifyCid = (dagNode, expectedCid, doneCb) => {
-  IpldBitcoin.util.cid(dagNode, (err, cid) => {
+  IpldLeofcoin.util.cid(dagNode, (err, cid) => {
     expect(err).to.not.exist()
     expect(cid.multihash.toString('hex')).to.equal(expectedCid)
     doneCb()

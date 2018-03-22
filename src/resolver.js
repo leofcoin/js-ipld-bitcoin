@@ -12,12 +12,12 @@ const util = require('./util')
  *   for further resolving.
  */
 /**
- * Resolves a path in a Bitcoin block.
+ * Resolves a path in a Leofcoin block.
  *
  * Returns the value or a link and the partial mising path. This way the
  * IPLD Resolver can fetch the link and continue to resolve.
  *
- * @param {Buffer} binaryBlob - Binary representation of a Bitcoin block
+ * @param {Buffer} binaryBlob - Binary representation of a Leofcoin block
  * @param {string} [path='/'] - Path that should be resolved
  * @param {ResolveCallback} callback - Callback that handles the return value
  * @returns {void}
@@ -77,7 +77,7 @@ const resolve = (binaryBlob, path, callback) => {
 /**
  * Return all available paths of a block.
  *
- * @param {Buffer} binaryBlob - Binary representation of a Bitcoin block
+ * @param {Buffer} binaryBlob - Binary representation of a Leofcoin block
  * @param {Object} [options] - Possible options
  * @param {boolean} [options.values=false] - Retun only the paths by default.
  *   If it is `true` also return the values
@@ -123,7 +123,7 @@ const resolveField = (dagNode, field) => {
     case 'nonce':
       return dagNode.nonce
     case 'parent':
-      return {'/': util.hashToCid(dagNode.prevHash)}
+      return {'/': util.hashToCid(dagNode.parent)}
     case 'tx':
       return {'/': util.hashToCid(dagNode.merkleRoot)}
     default:
@@ -132,7 +132,7 @@ const resolveField = (dagNode, field) => {
 }
 
 module.exports = {
-  multicodec: 'bitcoin-block',
+  multicodec: 'leofcoin-block',
   resolve: resolve,
   tree: tree
 }

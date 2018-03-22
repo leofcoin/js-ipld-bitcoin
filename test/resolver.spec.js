@@ -7,7 +7,7 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 const CID = require('cids')
-const IpldBitcoin = require('../src/index')
+const IpldLeofcoin = require('../src/index')
 
 const fixtureBlockHex = loadFixture('test/fixtures/block.hex')
 const fixtureBlock = Buffer.from(fixtureBlockHex.toString(), 'hex')
@@ -15,7 +15,7 @@ const invalidBlock = Buffer.from('abcdef', 'hex')
 
 describe('IPLD format resolver API resolve()', () => {
   it('should return the deserialized node if no path is given', (done) => {
-    IpldBitcoin.resolver.resolve(fixtureBlock, (err, value) => {
+    IpldLeofcoin.resolver.resolve(fixtureBlock, (err, value) => {
       expect(err).to.not.exist()
       expect(value.remainderPath).is.empty()
       expect(value.value).is.not.empty()
@@ -24,7 +24,7 @@ describe('IPLD format resolver API resolve()', () => {
   })
 
   it('should return the deserialized node if path is empty', (done) => {
-    IpldBitcoin.resolver.resolve(fixtureBlock, '', (err, value) => {
+    IpldLeofcoin.resolver.resolve(fixtureBlock, '', (err, value) => {
       expect(err).to.not.exist()
       expect(value.remainderPath).is.empty()
       expect(value.value).is.not.empty()
@@ -61,7 +61,7 @@ describe('IPLD format resolver API resolve()', () => {
   })
 
   it('should return a link when parent is requested', (done) => {
-    IpldBitcoin.resolver.resolve(fixtureBlock, 'parent', (err, value) => {
+    IpldLeofcoin.resolver.resolve(fixtureBlock, 'parent', (err, value) => {
       expect(err).to.not.exist()
       expect(value.remainderPath).is.empty()
       expect(value.value).to.deep.equal({
@@ -72,7 +72,7 @@ describe('IPLD format resolver API resolve()', () => {
 
   it('should return a link and remaining path when parent is requested',
     (done) => {
-      IpldBitcoin.resolver.resolve(fixtureBlock, 'parent/timestamp',
+      IpldLeofcoin.resolver.resolve(fixtureBlock, 'parent/timestamp',
         (err, value) => {
           expect(err).to.not.exist()
           expect(value.remainderPath).to.equal('timestamp')
@@ -84,7 +84,7 @@ describe('IPLD format resolver API resolve()', () => {
     })
 
   it('should return a link when transactions are requested', (done) => {
-    IpldBitcoin.resolver.resolve(fixtureBlock, 'tx/some/remainder',
+    IpldLeofcoin.resolver.resolve(fixtureBlock, 'tx/some/remainder',
       (err, value) => {
         expect(err).to.not.exist()
         expect(value.remainderPath).to.equal('some/remainder')
@@ -101,7 +101,7 @@ describe('IPLD format resolver API resolve()', () => {
 
 describe('IPLD format resolver API tree()', () => {
   it('should return only paths by default', (done) => {
-    IpldBitcoin.resolver.tree(fixtureBlock, (err, value) => {
+    IpldLeofcoin.resolver.tree(fixtureBlock, (err, value) => {
       expect(err).to.not.exist()
       expect(value).to.deep.equal(['version', 'timestamp', 'difficulty',
         'nonce', 'parent', 'tx'])
@@ -110,7 +110,7 @@ describe('IPLD format resolver API tree()', () => {
   })
 
   it('should be able to return paths and values', (done) => {
-    IpldBitcoin.resolver.tree(fixtureBlock, {values: true}, (err, value) => {
+    IpldLeofcoin.resolver.tree(fixtureBlock, {values: true}, (err, value) => {
       expect(err).to.not.exist()
       expect(value).to.deep.equal({
         version: 2,
@@ -126,7 +126,7 @@ describe('IPLD format resolver API tree()', () => {
   })
 
   it('should return an error if block is invalid', (done) => {
-    IpldBitcoin.resolver.tree(invalidBlock, (err, value) => {
+    IpldLeofcoin.resolver.tree(invalidBlock, (err, value) => {
       expect(value).to.not.exist()
       expect(err).to.be.an('error')
       done()
@@ -136,13 +136,13 @@ describe('IPLD format resolver API tree()', () => {
 
 describe('IPLD format resolver API properties', () => {
   it('should have `multicodec` defined correctly', (done) => {
-    expect(IpldBitcoin.resolver.multicodec).to.equal('bitcoin-block')
+    expect(IpldLeofcoin.resolver.multicodec).to.equal('leofcoin-block')
     done()
   })
 })
 
 const verifyPath = (block, path, expected, done) => {
-  IpldBitcoin.resolver.resolve(block, path, (err, value) => {
+  IpldLeofcoin.resolver.resolve(block, path, (err, value) => {
     expect(err).to.not.exist()
     expect(value.remainderPath).is.empty()
     expect(value.value).is.equal(expected)
@@ -151,7 +151,7 @@ const verifyPath = (block, path, expected, done) => {
 }
 
 const verifyError = (block, path, done) => {
-  IpldBitcoin.resolver.resolve(block, path, (err, value) => {
+  IpldLeofcoin.resolver.resolve(block, path, (err, value) => {
     expect(value).to.not.exist()
     expect(err).to.be.an('error')
     done()

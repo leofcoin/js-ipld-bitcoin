@@ -1,20 +1,18 @@
 'use strict'
-
-const BitcoinjsBlock = require('bitcoinjs-lib').Block
-const CID = require('cids')
-const multihashes = require('multihashes')
-const sha256 = require('hash.js/lib/hash/sha/256')
+const CID = require('cids');
+const multihashes = require('multihashes');
+const { keccak256 } = require('leofcoin-hash');
 
 /**
  * @callback SerializeCallback
  * @param {?Error} error - Error if serialization failed
- * @param {?Buffer} binaryBlob - Binary Bitcoin block if serialization was
+ * @param {?Buffer} binaryBlob - Binary Leofcoin block if serialization was
  *   successful
  */
 /**
- * Serialize internal representation into a binary Bitcoin block.
+ * Serialize internal representation into a binary Leofcoin block.
  *
- * @param {BitcoinBlock} dagNode - Internal representation of a Bitcoin block
+ * @param {LeofcoinBlock} dagNode - Internal representation of a Leofcoin block
  * @param {SerializeCallback} callback - Callback that handles the
  *   return value
  * @returns {void}
@@ -34,13 +32,13 @@ const serialize = (dagNode, callback) => {
 /**
  * @callback DeserializeCallback
  * @param {?Error} error - Error if deserialization failed
- * @param {?BitcoinBlock} dagNode - Internal representation of a Bitcoin block
+ * @param {?LeofcoinBlock} dagNode - Internal representation of a Leofcoin block
  *   if deserialization was successful
  */
 /**
- * Deserialize Bitcoin block into the internal representation,
+ * Deserialize Leofcoin block into the internal representation,
  *
- * @param {Buffer} binaryBlob - Binary representation of a Bitcoin block
+ * @param {Buffer} binaryBlob - Binary representation of a Leofcoin block
  * @param {DeserializeCallback} callback - Callback that handles the
  *   return value
  * @returns {void}
@@ -49,7 +47,7 @@ const deserialize = (binaryBlob, callback) => {
   let err = null
   let dagNode
   try {
-    dagNode = BitcoinjsBlock.fromBuffer(binaryBlob)
+    dagNode = binaryBlob.toString();
   } catch (deserializeError) {
     err = deserializeError
   } finally {
@@ -65,37 +63,35 @@ const deserialize = (binaryBlob, callback) => {
 /**
  * Get the CID of the DAG-Node.
  *
- * @param {BitcoinBlock} dagNode - Internal representation of a Bitcoin block
+ * @param {LeofcoinBlock} dagNode - Internal representation of a Leofcoin block
  * @param {CidCallback} callback - Callback that handles the return value
  * @returns {void}
  */
 const cid = (dagNode, callback) => {
-  let err = null
-  let cid
+  let err = null;
+  let cid;
   try {
-    // Bitcoin double hashes
-    const firstHash = sha256().update(dagNode.toBuffer(true)).digest()
-    const headerHash = sha256().update(Buffer.from(firstHash)).digest()
+    // Leofcoin double hashes
+    const firstHash = keccak256(dagNode.toBuffer(true));
+    const hash = keccak256(Buffer.from(firstHash));
 
-    cid = hashToCid(Buffer.from(headerHash))
+    cid = hashToCid(Buffer.from(hash));
   } catch (cidError) {
-    err = cidError
+    err = cidError;
   } finally {
-    callback(err, cid)
+    callback(err, cid);
   }
 }
 
-// Convert a Bitcoin hash (as Buffer) to a CID
+// Convert a Leofcoin hash (as Buffer) to a CID
 const hashToCid = (hash) => {
-  const multihash = multihashes.encode(hash, 'dbl-sha2-256')
-  const cidVersion = 1
-  const cid = new CID(cidVersion, 'bitcoin-block', multihash)
-  return cid
+  const multihash = multihashes.encode(hash, 'keccak-256');
+  const cidVersion = 1;
+  return new CID(cidVersion, 'leofcoin-block', multihash);
 }
 
 module.exports = {
   hashToCid: hashToCid,
-
   // Public API
   cid: cid,
   deserialize: deserialize,
